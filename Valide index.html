@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès Réservé - Atirma</title>
+    <style>
+        body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #ffeef2; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        #musicToggle { position: fixed; top: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background-color: #007bff; color: white; border: none; cursor: pointer; z-index: 1000; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(0,123,255,0.4); }
+        .card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(255, 105, 180, 0.2); text-align: center; width: 320px; border: 2px solid #ffcad4; position: relative; z-index: 10; }
+        .nounours { font-size: 80px; margin-bottom: 15px; display: inline-block; animation: beauGosse 1.2s infinite ease-in-out; }
+        @keyframes beauGosse { 0%, 100% { transform: scale(1) rotate(-5deg); } 50% { transform: scale(1.1) rotate(5deg) translateY(-10px); } }
+        h2 { color: #ff4d6d; font-size: 20px; margin-bottom: 25px; line-height: 1.4; }
+        .btns { display: flex; justify-content: center; align-items: center; gap: 20px; min-height: 60px; }
+        button, .final-link { padding: 12px 25px; border-radius: 50px; border: none; cursor: pointer; font-weight: bold; font-size: 16px; transition: all 0.2s ease; text-decoration: none; }
+        #btnOui { background-color: #ff4d6d; color: white; }
+        #btnNon { background-color: #f8f9fa; color: #adb5bd; position: relative; }
+        #passArea { display: none; margin-top: 20px; }
+        input { width: 85%; padding: 12px; border-radius: 12px; border: 2px solid #ffcad4; outline: none; text-align: center; margin-bottom: 15px; font-size: 16px; }
+        #btnValider { background: #ff4d6d; color: white; width: 100%; }
+        #driveLink { display: none; background: #28a745; color: white; width: fit-content; margin: 0 auto; padding: 10px 25px; }
+        .error { color: #ff4d6d; font-size: 13px; display: none; margin-bottom: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <button id="musicToggle">🎵</button>
+    <audio id="myAudio" loop>
+        <source src="lv_0_20260227211111.mp3" type="audio/mp3">
+        <source src="./lv_0_20260227211111.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card">
+        <span class="nounours">🧸</span>
+        <h2 id="question">C'est notre petit jardin secret... Veux-tu y accéder ?</h2>
+        <div class="btns" id="btnGroup">
+            <button id="btnOui">Oui !</button>
+            <button id="btnNon">Non</button>
+        </div>
+        <div id="passArea">
+            <input type="text" id="passwordInput" placeholder="Ton code secret...">
+            <div id="errorMsg" class="error">C'est pas le code ma belle 🌝</div>
+            <button id="btnValider">Entrer</button>
+            <a href="https://drive.google.com/drive/folders/1eAoF7xX0nJFTbfM0vqU0z0TPxVwZGB7M" id="driveLink">Ouvrir le Drive 📂</a>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('myAudio');
+        const musicBtn = document.getElementById('musicToggle');
+
+        musicBtn.onclick = () => {
+            // On force le rechargement au cas où le navigateur aurait "oublié" le fichier
+            if (audio.paused) {
+                audio.load(); 
+                audio.play().then(() => {
+                    musicBtn.innerText = "⏸️";
+                }).catch(err => {
+                    alert("Erreur de lecture. Vérifie que le fichier est bien nommé : lv_0_20260227211111.m4a");
+                });
+            } else {
+                audio.pause();
+                musicBtn.innerText = "🎵";
+            }
+        };
+
+        const btnNon = document.getElementById('btnNon');
+        let hasMoved = false;
+        const moveButton = () => {
+            if (!hasMoved) { btnNon.style.position = 'fixed'; hasMoved = true; }
+            btnNon.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            btnNon.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+        };
+        btnNon.addEventListener('mouseover', moveButton);
+        btnNon.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); });
+
+        document.getElementById('btnOui').onclick = () => {
+            document.getElementById('btnGroup').style.display = 'none';
+            document.getElementById('question').innerText = "Code secret ma belle 😌";
+            document.getElementById('passArea').style.display = 'block';
+        };
+
+        document.getElementById('btnValider').onclick = () => {
+            const mdp = document.getElementById('passwordInput').value.toLowerCase().trim();
+            if (mdp === "mon ange") {
+                document.getElementById('question').innerText = "Accès autorisé 😎";
+                document.getElementById('passArea').style.display = 'none';
+                document.getElementById('driveLink').style.display = 'block';
+                setTimeout(() => { window.location.href = "https://drive.google.com/drive/folders/1eAoF7xX0nJFTbfM0vqU0z0TPxVwZGB7M"; }, 800);
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
